@@ -27,7 +27,7 @@ class NoopExecutor : public AbstractExecutor {
 class NewThreadExecutor : public AbstractExecutor {
  public:
   void execute(std::function<void()> &&func) override {
-    std::thread(func).detach();
+    std::thread(func).detach(); // thread 创建出来的线程可能会复用，类似于线程池。
   }
 };
 

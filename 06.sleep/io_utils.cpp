@@ -47,3 +47,23 @@ std::stringstream &PrintThread(std::stringstream &ss) {
   ss << " [Thread-" << setw(5) << this_thread::get_id() << "] ";
   return ss;
 }
+
+void SetIndentAndColor() {
+  using namespace std;
+  static vector<thread::id> threadIds;
+  const array<const char* const, 8> colors = {"\033[0m", "\033[31m", "\033[32m", "\033[33m", "\033[34m", "\033[35m", "\033[36m", "\033[37m"};
+  auto id = this_thread::get_id();
+  auto it = find(threadIds.begin(), threadIds.end(), id);
+  if (it == threadIds.end()) {
+    threadIds.push_back(id);
+    it = threadIds.end() - 1;
+  }
+  for (auto i = threadIds.begin(); i != it; ++i) {
+    cout << "\t";
+  }
+  cout << colors[(it - threadIds.begin()) % colors.size()];
+}
+
+void ResetColor() {
+  std::cout << "\033[0m";
+}

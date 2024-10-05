@@ -68,7 +68,8 @@ void test_tasks() {
 }
 
 int main() {
+  debug("main start ...");
   test_tasks();
-//  test_scheduler();
+  // test_scheduler();
   return 0;
 }
