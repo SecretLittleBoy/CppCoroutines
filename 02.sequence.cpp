@@ -9,7 +9,7 @@
 
 struct Generator {
 
-  class ExhaustedException: std::exception { };
+  class ExhaustedException : std::exception {};
 
   struct promise_type {
     int value;
@@ -24,16 +24,19 @@ struct Generator {
       is_ready = true;
       return {};
     }
-
-    void unhandled_exception() {
-
+    std::suspend_always yield_value(int value) {
+      this->value = value;
+      is_ready = true;
+      return {};
     }
+
+    void unhandled_exception() {}
 
     Generator get_return_object() {
-      return Generator{ std::coroutine_handle<promise_type>::from_promise(*this) };
+      return Generator{std::coroutine_handle<promise_type>::from_promise(*this)};
     }
 
-    void return_void() { }
+    void return_void() {}
   };
 
   std::coroutine_handle<promise_type> handle;
@@ -47,11 +50,7 @@ struct Generator {
       handle.resume();
     }
 
-    if (handle.done()) {
-      return false;
-    } else {
-      return true;
-    }
+    return handle.done() ? false : true;
   }
 
   int next() {
@@ -65,11 +64,11 @@ struct Generator {
   explicit Generator(std::coroutine_handle<promise_type> handle) noexcept
       : handle(handle) {}
 
-  Generator(Generator &&generator) noexcept
+  Generator(Generator&& generator) noexcept
       : handle(std::exchange(generator.handle, {})) {}
 
-  Generator(Generator &) = delete;
-  Generator &operator=(Generator &) = delete;
+  Generator(Generator&) = delete;
+  Generator& operator=(Generator&) = delete;
 
   ~Generator() {
     if (handle) handle.destroy();

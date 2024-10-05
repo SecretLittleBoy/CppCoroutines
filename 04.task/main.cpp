@@ -3,6 +3,7 @@
 //
 #include "Task.h"
 #include "io_utils.h"
+#include <thread>
 
 Task<int> simple_task2() {
   debug("task 2 start ...");
@@ -13,7 +14,7 @@ Task<int> simple_task2() {
 }
 
 Task<int> simple_task3() {
-  debug("in task 3 start ...");
+  debug("task 3 start ...");
   using namespace std::chrono_literals;
   std::this_thread::sleep_for(2s);
   debug("task 3 returns after 2s.");
@@ -22,15 +23,17 @@ Task<int> simple_task3() {
 
 Task<int> simple_task() {
   debug("task start ...");
-  auto result2 = co_await simple_task2();
+  auto ret2 = simple_task2();
+  auto result2 = co_await std::move(ret2);
   debug("returns from task2: ", result2);
-  auto result3 = co_await simple_task3();
+  auto result3 = co_await simple_task3(); // 和上面的写法等价
   debug("returns from task3: ", result3);
   co_return 1 + result2 + result3;
 }
 
 int main() {
   auto simpleTask = simple_task();
+  debug("running simple task ...");
   simpleTask.then([](int i) {
     debug("simple task end: ", i);
   }).catching([](std::exception &e) {

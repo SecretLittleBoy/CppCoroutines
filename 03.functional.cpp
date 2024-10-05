@@ -11,7 +11,7 @@
 #include <string>
 #include "io.h"
 
-template<typename T>
+template <typename T>
 struct Generator {
 
   class ExhaustedException : std::exception {};
@@ -31,7 +31,6 @@ struct Generator {
     }
 
     void unhandled_exception() {
-
     }
 
     Generator get_return_object() {
@@ -66,16 +65,16 @@ struct Generator {
     }
     throw ExhaustedException();
   }
-  
-//  template<typename U>
-//  Generator<U> map(std::function<U(T)> f) {
-//    auto up_stream = std::move(*this);
-//    while (up_stream.has_next()) {
-//      co_yield f(up_stream.next());
-//    }
-//  }
 
-  template<typename F>
+  //  template<typename U>
+  //  Generator<U> map(std::function<U(T)> f) {
+  //    auto up_stream = std::move(*this);
+  //    while (up_stream.has_next()) {
+  //      co_yield f(up_stream.next());
+  //    }
+  //  }
+
+  template <typename F>
   Generator<std::invoke_result_t<F, T>> map(F f) {
     auto up_steam = std::move(*this);
     while (up_steam.has_next()) {
@@ -83,18 +82,18 @@ struct Generator {
     }
   }
 
-//  template<typename U>
-//  Generator<U> flat_map(std::function<Generator<U>(T)> f) {
-//    auto up_steam = std::move(*this);
-//    while (up_steam.has_next()) {
-//      auto generator = f(up_steam.next());
-//      while (generator.has_next()) {
-//        co_yield generator.next();
-//      }
-//    }
-//  }
+  //  template<typename U>
+  //  Generator<U> flat_map(std::function<Generator<U>(T)> f) {
+  //    auto up_steam = std::move(*this);
+  //    while (up_steam.has_next()) {
+  //      auto generator = f(up_steam.next());
+  //      while (generator.has_next()) {
+  //        co_yield generator.next();
+  //      }
+  //    }
+  //  }
 
-  template<typename F>
+  template <typename F>
   std::invoke_result_t<F, T> flat_map(F f) {
     auto up_steam = std::move(*this);
     while (up_steam.has_next()) {
@@ -113,7 +112,7 @@ struct Generator {
     }
   }
 
-  template<typename F>
+  template <typename F>
   Generator take_while(F f) {
     auto up_steam = std::move(*this);
     while (up_steam.has_next()) {
@@ -126,7 +125,7 @@ struct Generator {
     }
   }
 
-  template<typename F>
+  template <typename F>
   Generator filter(F f) {
     auto up_steam = std::move(*this);
     while (up_steam.has_next()) {
@@ -137,14 +136,14 @@ struct Generator {
     }
   }
 
-  template<typename F>
+  template <typename F>
   void for_each(F f) {
     while (has_next()) {
       f(next());
     }
   }
 
-  template<typename R, typename F>
+  template <typename R, typename F>
   R fold(R initial, F f) {
     while (has_next()) {
       initial = f(initial, next());
@@ -167,30 +166,30 @@ struct Generator {
   }
 
   Generator static from_list(std::list<T> list) {
-    for (auto t: list) {
+    for (auto t : list) {
       co_yield t;
     }
   }
 
   Generator static from(std::initializer_list<T> args) {
-    for (auto t: args) {
+    for (auto t : args) {
       co_yield t;
     }
   }
 
-  template<typename ...TArgs>
-  Generator static from(TArgs ...args) {
+  template <typename... TArgs>
+  Generator static from(TArgs... args) {
     (co_yield args, ...);
   }
 
   explicit Generator(std::coroutine_handle<promise_type> handle) noexcept
       : handle(handle) {}
 
-  Generator(Generator &&generator) noexcept
+  Generator(Generator&& generator) noexcept
       : handle(std::exchange(generator.handle, {})) {}
 
-  Generator(Generator &) = delete;
-  Generator &operator=(Generator &) = delete;
+  Generator(Generator&) = delete;
+  Generator& operator=(Generator&) = delete;
 
   ~Generator() {
     if (handle) handle.destroy();
@@ -225,7 +224,8 @@ int main() {
         for (int j = 0; j < i; ++j) {
           co_yield j;
         }
-      }).take(3)
+      })
+      .take(3)
       .for_each([](auto i) {
         std::cout << "for_each: " << i << std::endl;
       });
@@ -249,10 +249,11 @@ int main() {
       });
 
   fibonacci().take_while([](auto i) {
-    return i < 100;
-  }).for_each([](auto i) {
-    std::cout << i << " ";
-  });
+               return i < 100;
+             })
+      .for_each([](auto i) {
+        std::cout << i << " ";
+      });
 
   std::cout << std::endl;
 
@@ -264,7 +265,7 @@ int main() {
     return std::to_string(i);
   });
 
-  for(int i = 0; i < 10; i++) {
+  for (int i = 0; i < 10; i++) {
     std::cout << seq.next() << std::endl;
   }
 

@@ -26,7 +26,6 @@ struct Generator {
     }
 
     void unhandled_exception() {
-
     }
 
     Generator get_return_object() {
@@ -65,11 +64,11 @@ struct Generator {
   explicit Generator(std::coroutine_handle<promise_type> handle) noexcept
       : handle(handle) {}
 
-  Generator(Generator &&generator) noexcept
+  Generator(Generator&& generator) noexcept
       : handle(std::exchange(generator.handle, {})) {}
 
-  Generator(Generator &) = delete;
-  Generator &operator=(Generator &) = delete;
+  Generator(Generator&) = delete;
+  Generator& operator=(Generator&) = delete;
 
   ~Generator() {
     if (handle) handle.destroy();
@@ -97,7 +96,7 @@ Generator fibonacci() {
 }
 
 class Fibonacci {
- public:
+  public:
   int next() {
     if (a == -1) {
       a = 0;
@@ -111,7 +110,7 @@ class Fibonacci {
     return next;
   }
 
- private:
+  private:
   int a = -1;
   int b = 0;
 };

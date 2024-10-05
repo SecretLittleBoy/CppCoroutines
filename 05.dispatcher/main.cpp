@@ -61,8 +61,8 @@ void test_tasks() {
 }
 
 int main() {
+  debug("main start ...");
   test_tasks();
-
   auto looper = LooperExecutor();
 
   using namespace std::chrono_literals;

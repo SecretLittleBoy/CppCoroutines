@@ -30,15 +30,13 @@ struct Result {
     }
 
     void return_void() {
-
     }
 
-//    void return_value(int value) {
-//
-//    }
+    //    void return_value(int value) {
+    //
+    //    }
 
     void unhandled_exception() {
-
     }
   };
 };
@@ -51,7 +49,7 @@ struct Awaiter {
   }
 
   void await_suspend(std::coroutine_handle<> coroutine_handle) {
-    std::async([=](){
+    std::async([=]() {
       std::this_thread::sleep_for(1s);
       coroutine_handle.resume();
     });
@@ -73,13 +71,13 @@ Result Coroutine() {
   co_return;
 };
 
-//Result Coroutine(int start_value) {
-//  std::cout << start_value << std::endl;
-//  co_await std::suspend_always{};
-//  std::cout << start_value + 1 << std::endl;
+// Result Coroutine(int start_value) {
+//   std::cout << start_value << std::endl;
+//   co_await std::suspend_always{};
+//   std::cout << start_value + 1 << std::endl;
 //
-//  co_return 100;
-//};
+//   co_return 100;
+// };
 
 int main() {
   Coroutine();

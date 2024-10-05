@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "args": [
+                "helloworld.cpp"
+            ],
+            "cwd": "${fileDirname}",
+            "env": {
+                "PATH": "/usr/bin:${env:PATH}"
+            },
+            "name": "single file debug",
+            "preLaunchTask": "single file build",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
+            "request": "launch",
+            "type": "lldb"
+        }
+    ],
+    "version": "0.2.0"
+}

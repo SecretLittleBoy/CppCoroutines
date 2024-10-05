@@ -9,6 +9,10 @@
 
 const char *file_name(const char *path);
 
+void SetIndentAndColor();
+
+void ResetColor();
+
 void PrintTime();
 
 void PrintThread();
@@ -27,10 +31,12 @@ void Println(U... u) {
   std::cout.flush();
 }
 
-#define debug(...) \
-PrintTime();       \
-PrintThread();     \
-printf("(%s:%d) %s: ", file_name(__FILE__), __LINE__, __func__); \
-Println(__VA_ARGS__);
+#define debug(...)                                                 \
+  SetIndentAndColor();                                             \
+  PrintTime();                                                     \
+  PrintThread();                                                   \
+  printf("(%s:%d) %s: ", file_name(__FILE__), __LINE__, __func__); \
+  Println(__VA_ARGS__);                                            \
+  ResetColor();
 
 #endif //CPPCOROUTINES__IO_H_
