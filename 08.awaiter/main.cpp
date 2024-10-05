@@ -19,32 +19,32 @@ struct FakeAwaiter {
 
   void await_resume() {}
 
-  void install_executor(AbstractExecutor *) {}
+  void install_executor(AbstractExecutor*) {}
 };
 
-Task<void, LooperExecutor> Producer(Channel<int> &channel) {
+Task<void, LooperExecutor> Producer(Channel<int>& channel) {
   int i = 0;
   while (i < 10) {
     debug("send: ", i);
-//    co_await channel.write(i++);
+    // co_await channel.write(i++);
     co_await (channel << i++);
-//    co_await 300ms;
+    // co_await 300ms;
     co_await SleepAwaiter(300ms);
   }
 
-//  channel.close();
-//  debug("close channel, exit.");
+  // channel.close();
+  // debug("close channel, exit.");
 }
 
-Task<void, LooperExecutor> Consumer(Channel<int> &channel) {
+Task<void, LooperExecutor> Consumer(Channel<int>& channel) {
   while (channel.is_active()) {
     try {
-//      auto received = co_await channel.read();
+      // auto received = co_await channel.read();
       int received;
       co_await (channel >> received);
       debug("receive: ", received);
       co_await 500ms;
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
       debug("exception: ", e.what());
     }
   }
@@ -52,13 +52,13 @@ Task<void, LooperExecutor> Consumer(Channel<int> &channel) {
   debug("exit.");
 }
 
-Task<void, LooperExecutor> Consumer2(Channel<int> &channel) {
+Task<void, LooperExecutor> Consumer2(Channel<int>& channel) {
   while (channel.is_active()) {
     try {
       auto received = co_await channel.read();
       debug("receive2: ", received);
       co_await 200ms;
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
       debug("exception2: ", e.what());
     }
   }
@@ -66,8 +66,7 @@ Task<void, LooperExecutor> Consumer2(Channel<int> &channel) {
   debug("exit.");
 }
 
-
-void test_channel(Channel<int> &channel) {
+void test_channel(Channel<int>& channel) {
   auto producer = Producer(channel);
   auto consumer = Consumer(channel);
   auto consumer2 = Consumer2(channel);
@@ -93,14 +92,14 @@ Task<int, NewThreadExecutor> simple_task3() {
   co_return 3;
 }
 
-template<typename R>
-FutureAwaiter<R> as_awaiter(std::future<R> &&future) {
+template <typename R>
+FutureAwaiter<R> as_awaiter(std::future<R>&& future) {
   return FutureAwaiter(std::move(future));
 }
 
 Task<void> test1() {
-//  no matching overloaded function found
-//  co_await FakeAwaiter();
+  // no matching overloaded function found
+  // co_await FakeAwaiter();
   co_return;
 }
 
@@ -122,14 +121,15 @@ Task<int, LooperExecutor> simple_task() {
 void test_tasks() {
   auto simpleTask = simple_task();
   simpleTask.then([](int i) {
-    debug("simple task end: ", i);
-  }).catching([](std::exception &e) {
-    debug("error occurred", e.what());
-  });
+              debug("simple task end: ", i);
+            })
+      .catching([](std::exception& e) {
+        debug("error occurred", e.what());
+      });
   try {
     auto i = simpleTask.get_result();
     debug("simple task end from get: ", i);
-  } catch (std::exception &e) {
+  } catch (std::exception& e) {
     debug("error: ", e.what());
   }
 }
@@ -138,6 +138,6 @@ int main() {
   auto channel = Channel<int>(2);
   test_channel(channel);
   channel.close();
-//  test_tasks();
+  // test_tasks();
   return 0;
 }
